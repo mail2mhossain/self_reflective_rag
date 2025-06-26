@@ -1,0 +1,19 @@
+open_ai:
+  key: ""
+  model: "gpt-4o"
+embedding_model: "BAAI/bge-large-en-v1.5"
+weaviate_url: "http://localhost:8080"
+mongodb:
+  url: "mongodb://localhost:27017"
+  db_name: "embedding_db"
+  parent_collection: "parent_chunks"
+dox_metadata:
+  parent_id_key: "parent_id"
+  file_id_key: "file_id"
+  encoding: "utf-8"
+vector_index:
+  parent_index: "parent_index"
+  child_index: "child_index"
+  qa_index: "qa_index"
+vector_db:
+  sqlite_file: "sqlite:///file_processor.sqlite"

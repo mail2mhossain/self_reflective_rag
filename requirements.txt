@@ -1,0 +1,11 @@
+pyyaml
+pypdf
+tiktoken
+langchain
+langchain_community
+langchain_openai
+langchain_weaviate
+langchain_huggingface
+pymongo
+sentence-transformers
+weaviate-client
