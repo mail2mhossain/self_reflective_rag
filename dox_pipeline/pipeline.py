@@ -61,10 +61,10 @@ def dox_pipeline(
 
     print("Child docs: ", len(child_docs))
     print("QA docs: ", len(qa_docs))
-    # print("Storing parent docs in MongoDB...")
-    # store_parent_docs_in_mongodb(parent_docs)
-    # print("Storing child docs and QA pairs in vector database...")
-    # store_in_vector_db(child_docs, qa_docs)
+    print("Storing parent docs in MongoDB...")
+    store_parent_docs_in_mongodb(parent_docs)
+    print("Storing child docs and QA pairs in vector database...")
+    store_in_vector_db(child_docs, qa_docs)
 
 
 if __name__ == "__main__":
