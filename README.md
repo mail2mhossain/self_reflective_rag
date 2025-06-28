@@ -29,9 +29,14 @@ Retrieval-Augmented Generation (RAG) pipelines are becoming essential in buildin
    pip install -r requirements.txt
    ```
 
-5. **Run the pipeline**:
+5. **Run the data ingestion pipeline**:
    ```bash
-   python -m rag.dox_pipeline.pipeline [from root directory]
+   python -m rag.data_ingest_pipeline.pipeline [from root directory]
+   ```
+
+6. **Run the retrieval pipeline**:
+   ```bash
+   python -m rag.retrieval.pipeline [from root directory]
    ```
 
 *To remove the environment after use:*
