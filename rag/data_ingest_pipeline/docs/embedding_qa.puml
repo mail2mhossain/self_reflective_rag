@@ -1,0 +1,35 @@
+@startuml
+title Embedding Question-Answer
+
+start
+
+
+
+' 3. Prepare empty collections
+:qa_docs = [];
+
+' 4. Iterate over each parent document
+while (More parent_docs?) is (yes)
+
+      :qa_data = generate_qa(doc.page_content);
+      note right
+          This function feeds the given page content into a LLM via a prompt chain, 
+          requests structured output in the QA_Data schema through function-calling, 
+          and returns the generated question-answer data
+      end note
+
+      while (More QA pairs?) is (yes)
+        :page_content = qa.question + "\n" + qa.answer;
+        :qa_doc = Document(page_content,\n          metadata={file_id,\n                    parent_id,\n                    source});
+        :qa_docs.append(qa_doc);
+      endwhile (no)
+    
+
+
+endwhile (no)
+
+' 5. Persist to vector DB
+:store_in_vector_db(qa_docs);
+
+stop
+@enduml

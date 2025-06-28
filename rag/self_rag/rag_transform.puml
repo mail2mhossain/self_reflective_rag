@@ -1,0 +1,29 @@
+@startuml
+title Self Reflective RAG (TRANSFORM)
+
+start
+:User Query;
+:Rephrased Query\n(Entry Node);
+:Hybrid Retrieval\n(Node);
+:Filter Relevant Documents\n(Node);
+
+if (Is_any_Dox?) then (Yes)
+  :generate Answer\n(Node);
+  if (Is_Document_Grounded?) then (Yes)
+    if (Is_Answer_Relevant?) then (Yes)
+      :Successful\n(Got Answer);
+      stop
+    else (No ())
+      :Un-successful\n(No Answer);
+      stop
+    endif
+  else (No ())
+    :Un-successful\n(No Answer);
+    stop
+  endif
+else (No)
+  :Un-successful\n(No Answer);
+  stop
+endif
+
+@enduml

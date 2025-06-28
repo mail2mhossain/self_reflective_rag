@@ -1,0 +1,81 @@
+@startuml
+title Embedding Generation Workflow
+
+start
+
+' 1. Generate File ID
+:file_id = generate_file_id(file_path);
+note right
+File ID is generated from the
+MD5 hash of the file’s contents
+end note
+
+' 2. Load and derive documents
+partition "get_dox_from_file" #LightGreen {
+  :documents = load_document(file_path);
+
+  if (mime_type == PDF?) then
+    :loader = PyPDFLoader(file_path);
+  elseif (mime_type == TXT?) then
+    :loader = TextLoader(file_path, encoding);
+  elseif (mime_type == DOCX?) then
+    :loader = Docx2txtLoader(file_path);
+  else
+    :Raise ValueError "Unsupported type";
+  endif
+
+  :documents = loader.load();
+  :Concatenate page_content;
+  :document = Document(page_content,\n          metadata={source, file_id});
+}
+
+partition "get_parent_dox" #LightGreen {
+  :tokens = num_tokens_from_string(document.page_content);
+
+  if (tokens > max_tokens?) then
+    :splitted_docs = parent_splitter.split_documents([document]);
+    while (More splitted_docs?) is (yes)
+      :Assign parent_id = uuid4();
+      :metadata={file_id,\n                    parent_id,\n                    source};
+    endwhile (no)
+  else
+    :Assign parent_id = uuid4();
+    :metadata={file_id,\n                    parent_id,\n                    source};
+  endif
+
+  :parent_docs;
+}
+
+' 3. Prepare empty collections
+:child_docs = []\nqa_docs = [];
+
+' 4. Iterate over each parent document
+while (More parent_docs?) is (yes)
+
+  fork
+    :sub_docs = child_splitter.split_documents([doc]);
+    :child_docs.extend(sub_docs);
+  fork again
+    partition "get_question_answers" #LightGreen {
+      :qa_data = generate_qa(doc.page_content);
+      note right
+          This function feeds the given page content into a LLM via a prompt chain, 
+          requests structured output in the QA_Data schema through function-calling, 
+          and returns the generated question-answer data
+      end note
+
+      while (More QA pairs?) is (yes)
+        :page_content = qa.question + "\n" + qa.answer;
+        :qa_doc = Document(page_content,\n          metadata={file_id,\n                    parent_id,\n                    source});
+        :qa_docs.append(qa_doc);
+      endwhile (no)
+    }
+  end fork
+
+endwhile (no)
+
+' 5. Persist to vector DB
+:store_in_vector_db(parent_docs,\nchild_docs,\nqa_docs);
+
+stop
+@enduml

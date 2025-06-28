@@ -31,7 +31,7 @@ Retrieval-Augmented Generation (RAG) pipelines are becoming essential in buildin
 
 5. **Run the pipeline**:
    ```bash
-   python -m dox_pipeline.pipeline [from root directory]
+   python -m rag.dox_pipeline.pipeline [from root directory]
    ```
 
 *To remove the environment after use:*

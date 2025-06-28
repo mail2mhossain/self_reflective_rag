@@ -1,0 +1,18 @@
+@startuml
+start
+
+:user query;
+:Hybrid dense+sparse search;
+
+fork
+  :Retrieve child-chunk hits (Weaviate);
+fork again
+  :Retrieve QA-chunk hits (Weaviate);
+end fork
+
+:Merge & Cross-Encoder re-rank (Top 5);
+:Get unique parent IDs;
+:Parent lookup (MongoDB);
+:Context compression (LLM);
+stop
+@enduml

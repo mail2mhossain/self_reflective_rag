@@ -2,6 +2,7 @@ pyyaml
 pypdf
 tiktoken
 langchain
+langgraph
 langchain_community
 langchain_openai
 langchain_weaviate
