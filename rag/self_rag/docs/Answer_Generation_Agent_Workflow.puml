@@ -1,0 +1,39 @@
+@startuml AnswerGenerationAgent
+title Simple Self-Reflective RAG Workflow
+
+start
+
+:User Query;
+:Context Retrieval;
+note right
+  (retrieve_data)
+end note
+
+:Answer Generator;
+note right
+  (generate)
+end note
+
+if (Document Grounded?) then (yes)
+  note right
+    (is_document_grounded)
+  end note
+  
+  if (Answer Relevant?) then (yes)
+    note right
+      (is_answer_relevant)
+    end note
+    
+    :Return Final Answer;
+    stop
+  else (no)
+    :No Answer;
+    stop
+  endif
+
+else (no)
+  :No Answer;
+  stop
+endif
+
+@enduml

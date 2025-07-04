@@ -1,0 +1,43 @@
+@startuml
+title Decompose RAG Workflow 
+start
+:User Query;
+:Decompose Query;
+note right: generate sub-queries
+
+if (Sub-queries available?) then (yes)
+  
+  fork
+    :Process each sub-query in parallel;
+    note right: decompose_answer\nand run full AnswerGenerationAgent
+    
+    partition AnswerGenerationAgent {
+      :Context Retrieval;
+      note right: retrieve_data
+
+      :Answer Generator;
+      note right: generate
+
+      if (Document Grounded?) then (yes)
+        note right: is_document_grounded
+
+        if (Answer Relevant?) then (yes)
+          note right: is_answer_relevant
+          :Return Final Answer;
+        else (no)
+          :No Answer;
+        endif
+
+      else (no)
+        :No Answer;
+      endif
+    }
+  end fork
+
+endif
+
+:Summarize Answer;
+note right: summarize_answers
+stop
+
+@enduml

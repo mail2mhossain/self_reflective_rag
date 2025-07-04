@@ -1,6 +1,6 @@
 open_ai:
-  key: "YOUR API KEY"
-  model: "gpt-4o"
+  key: "YOUR_OPENAI_API_KEY"
+  model: "o4-mini"
 embedding_model: "BAAI/bge-large-en-v1.5"
 weaviate:
   url: "http://localhost:8080"

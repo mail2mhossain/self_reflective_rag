@@ -36,7 +36,12 @@ Retrieval-Augmented Generation (RAG) pipelines are becoming essential in buildin
 
 6. **Run the retrieval pipeline**:
    ```bash
-   python -m rag.retrieval.pipeline [from root directory]
+   python -m rag.data_retrieval.pipeline [from root directory]
+   ```
+
+7. **Run the generation pipeline**:
+   ```bash
+   python -m rag.self_rag.main [from root directory]
    ```
 
 *To remove the environment after use:*

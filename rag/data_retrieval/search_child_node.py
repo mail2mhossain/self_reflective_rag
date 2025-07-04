@@ -3,9 +3,10 @@ import weaviate
 from langchain_weaviate.vectorstores import WeaviateVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
 from langgraph.types import Command
-from rag.retrieval.retriever_state import RetrieverState
+from rag.data_retrieval.retriever_state import RetrieverState
+
 from rag.config import (
-    QA_INDEX, 
+    CHILD_INDEX, 
     EMBEDDING_MODEL, 
     WEAVIATE_URL, 
     WEAVIATE_URL_HOST, 
@@ -24,27 +25,27 @@ emb = HuggingFaceEmbeddings(
 )
 
 
-def get_qa_chunks(state: RetrieverState) -> Command:
-    print(f"Entering in QA SEARCH:\n")
+def get_child_chunks(state: RetrieverState) -> Command:
+    print(f"Entering in CHILD SEARCH:\n")
     weaviate_client = weaviate.connect_to_local(
         skip_init_checks=True
     )
 
     try:
-        qa_store = WeaviateVectorStore(
+        child_store = WeaviateVectorStore(
             client=weaviate_client,
-            index_name=QA_INDEX,
+            index_name=CHILD_INDEX,
             text_key="text",
             embedding=emb,
             attributes=[file_id_key, parent_id_key],
         )
 
-        docs = qa_store.similarity_search(state["question"], k=10, alpha=0.5)
-        print(f"Total qa docs found: {len(docs)}")
-        
+        docs = child_store.similarity_search(state["question"], k=10, alpha=0.5)
+        print(f"Total child docs found: {len(docs)}")
+         
         return Command(
             update={
-                "qa_chunks": docs,
+                "child_chunks": docs,
             },
             goto="re_ranking"
         )
@@ -52,5 +53,6 @@ def get_qa_chunks(state: RetrieverState) -> Command:
         weaviate_client.close()
 
 if __name__ == "__main__":
-    res = get_qa_chunks({"question": "Explain Strategic Design of DDD"})
+    res = get_child_chunks({"question": "Explain Strategic Design of DDD"})
+
     

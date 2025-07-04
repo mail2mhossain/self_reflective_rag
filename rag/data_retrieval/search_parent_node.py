@@ -2,7 +2,7 @@ from numpy import concatenate
 from pymongo import MongoClient
 from typing import List, Optional
 from langgraph.types import Command
-from rag.retrieval.retriever_state import RetrieverState
+from rag.data_retrieval.retriever_state import RetrieverState
 from langchain_core.documents import Document
 from rag.config import MONGO_URI, MONGO_DB_NAME, MONGO_PARENT_COLLECTION, parent_id_key
 

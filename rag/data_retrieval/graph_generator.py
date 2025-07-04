@@ -1,10 +1,10 @@
 from langgraph.graph import StateGraph
-from rag.retrieval.retriever_state import RetrieverState
-from rag.retrieval.search_child_node import get_child_chunks
-from rag.retrieval.search_qa_node import get_qa_chunks
-from rag.retrieval.re_ranking_node import cross_encoder_re_rank
-from rag.retrieval.search_parent_node import get_contents_by_parent_id
-from rag.retrieval.contextual_compressor_node import compress_context
+from rag.data_retrieval.retriever_state import RetrieverState
+from rag.data_retrieval.search_child_node import get_child_chunks
+from rag.data_retrieval.search_qa_node import get_qa_chunks
+from rag.data_retrieval.re_ranking_node import cross_encoder_re_rank
+from rag.data_retrieval.search_parent_node import get_contents_by_parent_id
+from rag.data_retrieval.contextual_compressor_node import compress_context
 
 
 def generate_graph():

@@ -1,6 +1,6 @@
-from rag.retrieval.graph_generator import generate_graph
+from rag.data_retrieval.graph_generator import generate_graph
 
-# python -m rag.retrieval.execute_graph
+# python -m rag.data_retrieval.execute_graph
 
 query = "Explain Strategic Design of DDD"
 

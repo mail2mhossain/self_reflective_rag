@@ -1,0 +1,44 @@
+@startuml FullRAGOrchestrationWorkflow
+title RAG Orchestration Workflow
+
+start
+:user_query;
+:query_strategy_router;
+note right: Decide Technique 
+
+if (Technique == "transform_query") then (T)
+  :transform_query(user_query);
+  :Answer Generation Agent Workflow;
+elseif (Technique == "handle_multi_query") then (M)
+  :handle_multi_query(user_query);
+  :Multi-Query Answer Generation Agent Workflow with\nAnswer Generation Agent Workflow;
+elseif (Technique == "handle_decomposed_query") then (D)
+  :handle_decomposed_query(user_query);
+  :Multi-Query Answer Generation Agent Workflow with\nAnswer Generation Agent Workflow;
+elseif (Technique == "combine_techniques") then (C)
+  :Combine Techniques;
+  note right: enter run_controller()
+
+  partition run_controller {
+    if (key == "T→M") then (T→M)
+      :transform_user_query(user_query);
+      :multi_query(transformed);
+      :Multi-Query Answer Generation Agent Workflow with\nAnswer Generation Agent Workflow;
+    elseif (key == "T→D") then (T→D)
+      :transform_user_query(user_query);
+      :Decompose RAG Workflow with \nAnswer Generation Agent Workflow;
+    elseif (key == "M→D") then (M→D)
+      :transform_user_query(user_query);
+      :multi_query(transformed);
+      :Multi-Query Answer Generation Agent Workflow with\nDecompose RAG Workflow with\nAnswer Generation Agent Workflow;
+    elseif (key == "T→M→D") then (T→M→D)
+      :transform_user_query(user_query);
+      :multi_query(transformed);
+      :Multi-Query Answer Generation Agent Workflow with\nDecompose RAG Workflow with\nAnswer Generation Agent Workflow;
+    endif
+  }
+endif
+
+:Return answer;
+stop
+@enduml

@@ -1,0 +1,82 @@
+@startuml
+title Multi-Query Answer Generation Agent Workflow
+
+start
+:Continue to Multi-Query Answer;
+
+
+if (Have sub-queries?) then (yes)
+  fork
+    :Process Sub-Query;
+    note right: multi_query_answer
+
+    if (Use Decompose RAG?) then (yes)
+      partition DecomposeRAGWorkflow {
+        :Decompose Query;
+        note right: generate sub-queries
+
+        if (Sub-queries available?) then (yes)
+          
+          fork
+            :Process each sub-query in parallel;
+            note right: decompose_answer\nand run full AnswerGenerationAgent
+
+            partition AnswerGenerationAgent {
+              :Context Retrieval;
+              note right: retrieve_data
+
+              :Answer Generator;
+              note right: generate
+
+              if (Document Grounded?) then (yes)
+                note right: is_document_grounded
+
+                if (Answer Relevant?) then (yes)
+                  note right: is_answer_relevant
+                  :Return Final Answer;
+                else (no)
+                  :No Answer;
+                endif
+
+              else (no)
+                :No Answer;
+              endif
+            }
+          end fork
+
+        endif
+
+        :Summarize Answer;
+      }
+    else (no)
+      partition AnswerGenerationAgent {
+        :Context Retrieval;
+        note right: retrieve_data
+
+        :Answer Generator;
+        note right: generate
+
+        if (Document Grounded?) then (yes)
+          note right: is_document_grounded
+
+          if (Answer Relevant?) then (yes)
+            note right: is_answer_relevant
+            :Return Answer;
+          else (no)
+            :No Answer;
+          endif
+
+        else (no)
+          :No Answer;
+        endif
+      }
+    endif
+
+  end fork
+endif
+
+:Summarize All Answers;
+
+stop
+
+@enduml

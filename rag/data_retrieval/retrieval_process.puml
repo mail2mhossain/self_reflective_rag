@@ -1,4 +1,7 @@
 @startuml
+
+title Self Reflective RAG Technique: retrieval
+
 start
 
 :user query;

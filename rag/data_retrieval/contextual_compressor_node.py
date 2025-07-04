@@ -2,11 +2,8 @@ from langchain_openai import ChatOpenAI
 from langchain.retrievers.document_compressors import LLMChainExtractor
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from langgraph.types import Command
-from rag.retrieval.retriever_state import RetrieverState
-from rag.config import GPT_MODEL, OPENAI_API_KEY
-
-
-llm = ChatOpenAI(model_name=GPT_MODEL, temperature=0, openai_api_key=OPENAI_API_KEY, cache=False)
+from rag.data_retrieval.retriever_state import RetrieverState
+from rag.llm_config import llm
 
 def compress_context(state: RetrieverState) -> Command:
     print(f"Entering in CONTEXT COMPRESSOR:\n")

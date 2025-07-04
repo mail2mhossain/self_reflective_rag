@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from sentence_transformers import CrossEncoder
 from langgraph.types import Command
-from rag.retrieval.retriever_state import RetrieverState
+from rag.data_retrieval.retriever_state import RetrieverState
 from rag.config import parent_id_key
 
 
@@ -69,16 +69,18 @@ def bge_reranker(state:RetrieverState) -> Command:
     }
 
 
+cross_encoder = CrossEncoder(
+    "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    device="cuda",        
+    # low_cpu_mem_usage=True,   # helps avoid meta tensors on CPU
+    max_length=512
+)  # cross-encoder/stsb-roberta-base
+
 def cross_encoder_re_rank(state:RetrieverState) -> Command:
     print(f"Entering in CROSS ENCODER RE-RANKING:\n")
     
     query = state["question"]
     all_dox = state["child_chunks"] + state["qa_chunks"]
-
-
-    cross_encoder = CrossEncoder(
-        "cross-encoder/ms-marco-MiniLM-L-6-v2"
-    )  # cross-encoder/stsb-roberta-base
 
     pairs = [[query, doc.page_content] for doc in all_dox]
 
