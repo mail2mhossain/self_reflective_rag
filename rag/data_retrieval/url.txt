@@ -1,3 +1,0 @@
-https://python.langchain.com/docs/modules/data_connection/retrievers/
-
-https://github.com/tomasonjo/blogs/blob/master/llm/enhancing_rag_with_graph.ipynb
