@@ -31,17 +31,17 @@ Retrieval-Augmented Generation (RAG) pipelines are becoming essential in buildin
 
 5. **Run the data ingestion pipeline**:
    ```bash
-   python -m rag.data_ingest_pipeline.pipeline [from root directory]
+   python -m ag.data_ingest_pipeline.multi_modal_data_ingest_pipeline 
    ```
 
 6. **Run the retrieval pipeline**:
    ```bash
-   python -m rag.data_retrieval.pipeline [from root directory]
+   python -m rag.data_retrieval.pipeline 
    ```
 
-7. **Run the generation pipeline**:
+7. **Run the self_reflective RAG**:
    ```bash
-   python -m rag.self_rag.main [from root directory]
+   python -m rag.self_rag.main 
    ```
 
 *To remove the environment after use:*

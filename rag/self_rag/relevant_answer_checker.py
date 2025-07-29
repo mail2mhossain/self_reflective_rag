@@ -5,6 +5,7 @@ from langchain.prompts import PromptTemplate
 from rag.self_rag.agent_state import AnswerGenerationState
 from rag.llm_config import llm
 from langgraph.graph import END
+from rag.self_rag.constants import VALIDATE_ANSWER_QUALITY
 
 GENERATION_BY_QUERY_PROMPT = """You are a grader assessing whether an answer is useful to resolve a question. \n 
         Here is the answer:
@@ -52,12 +53,12 @@ def is_answer_relevant(state: AnswerGenerationState) -> Command:
     grade = score.binary_score
 
     if grade == "yes":
-        print("---DECISION: USEFUL, MOVE TO END---")
+        print("---DECISION: USEFUL, MOVE TO RAGAS---")
         return Command(
             update={
                 "answer": answer,
             },
-            goto=END
+            goto=VALIDATE_ANSWER_QUALITY
         )
     else:
         print("---DECISION: NOT USEFUL, MOVE TO END---")

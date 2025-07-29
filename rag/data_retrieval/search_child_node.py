@@ -13,7 +13,8 @@ from rag.config import (
     WEAVIATE_URL_PORT, 
     WEAVIATE_SECURE, 
     file_id_key, 
-    parent_id_key
+    parent_id_key,
+    chunk_type_key,
 )
 
 
@@ -37,10 +38,10 @@ def get_child_chunks(state: RetrieverState) -> Command:
             index_name=CHILD_INDEX,
             text_key="text",
             embedding=emb,
-            attributes=[file_id_key, parent_id_key],
+            attributes=[file_id_key, parent_id_key, chunk_type_key, 'source'],
         )
 
-        docs = child_store.similarity_search(state["question"], k=10, alpha=0.5)
+        docs = child_store.similarity_search(state["question"], k=50, alpha=0.5)
         print(f"Total child docs found: {len(docs)}")
          
         return Command(

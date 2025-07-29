@@ -27,9 +27,10 @@ def multi_query_answer(state: EachQueryState) -> EachQueryState:
     graph = state["answer_generation_graph"]
     response = graph.invoke(inputs, config=config)
    
+    answer = response.get("answer", "No answer found")
     return Command(
         update={
-            "answers": [response["answer"]],
+            "answers": [answer],
         },
     ) 
 

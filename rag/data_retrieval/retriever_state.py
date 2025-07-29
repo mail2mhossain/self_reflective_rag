@@ -9,4 +9,5 @@ class RetrieverState(TypedDict):
     parent_ids: list[str]
     parent_docs: list[Document]
     compressed_docs: list[Document]
+    enriched_content: list[Document]
     

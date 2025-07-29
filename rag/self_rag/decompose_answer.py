@@ -24,9 +24,10 @@ def decompose_answer(state: EachQueryState) -> EachQueryState:
     graph = answer_generation_agent()
     response = graph.invoke(inputs, config=config)
 
+    answer = response.get("answer", "No answer found")
     return Command(
         update={
-            "answers": [response["answer"]],
+            "answers": [answer],
         },
     ) 
 

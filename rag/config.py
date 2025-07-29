@@ -1,4 +1,5 @@
 import yaml
+from types import SimpleNamespace
 from pathlib import Path
 
 # assume this file lives at RAG/rag/config.py
@@ -17,8 +18,10 @@ cfg = get_config()
 
 file_id_key = cfg['dox_metadata']["file_id_key"]
 parent_id_key = cfg['dox_metadata']["parent_id_key"]
+chunk_type_key = cfg['dox_metadata']["chunk_type_key"]
 encoding = cfg['dox_metadata']["encoding"]
 
+MAX_RETRIEVAL_TRY_COUNT = cfg['max_retrieval_try_count']
 # your OpenAI constants…
 OPENAI_API_KEY = cfg['open_ai']["key"]
 GPT_MODEL      = cfg['open_ai']["model"]
@@ -39,3 +42,10 @@ WEAVIATE_SECURE      = cfg.get("weaviate_url.secure", False)
 MONGO_URI               = cfg.get("mongodb.url", "mongodb://localhost:27017/")
 MONGO_DB_NAME           = cfg.get("mongodb.db_name", "embedding_db")
 MONGO_PARENT_COLLECTION = cfg.get("mongodb.parent_collection", "parent_chunks")
+
+# Create CHUNK_TYPE as a SimpleNamespace
+chunk_types_dict = cfg.get("chunk_types", {})
+CHUNK_TYPE = SimpleNamespace(**chunk_types_dict)
+
+FILE_PATH = cfg['file_path']["FILE_PATH"]
+print("FILE_PATH: ", FILE_PATH)

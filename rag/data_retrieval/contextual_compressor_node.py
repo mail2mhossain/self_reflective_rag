@@ -8,7 +8,7 @@ from rag.llm_config import llm
 def compress_context(state: RetrieverState) -> Command:
     print(f"Entering in CONTEXT COMPRESSOR:\n")
     query = state["question"]
-    parent_docs = state["parent_docs"]
+    enriched_content = state["parent_docs"]
 
     compressor = LLMChainExtractor.from_llm(llm=llm)
 
@@ -21,7 +21,7 @@ def compress_context(state: RetrieverState) -> Command:
     with ThreadPoolExecutor() as executor:
         # Create a future for each document compression task
         future_to_doc = {
-            executor.submit(compress_document, doc): doc for doc in parent_docs
+            executor.submit(compress_document, doc): doc for doc in enriched_content
         }
 
         for future in as_completed(future_to_doc):
@@ -35,4 +35,5 @@ def compress_context(state: RetrieverState) -> Command:
         update={
             "compressed_docs": compressed_docs,
         },
+        goto="enrich"
     )

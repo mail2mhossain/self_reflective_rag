@@ -1,7 +1,10 @@
 from langgraph.types import Command
+from langgraph.graph import END
 from rag.self_rag.agent_state import AnswerGenerationState
 from rag.data_retrieval.graph_generator import generate_graph
-from rag.self_rag.constants import ANSWER_GENERATOR
+from rag.self_rag.constants import CONTEXT_RETRIEVAL, CONTEXT_PRECISION
+from rag.config import MAX_RETRIEVAL_TRY_COUNT
+from rag.self_rag.context_precision import compute_context_precision
 
 # python -m rag.data_retrieval.execute_graph
 
@@ -24,10 +27,28 @@ def retrieve_data(state: AnswerGenerationState) -> Command:
     graph = generate_graph()
 
     output = graph.invoke(inputs, config=config)
+    context = output.get("compressed_docs", [])
 
-    return Command(
-        update={
-            "context": output["compressed_docs"]
-        },
-        goto=ANSWER_GENERATOR
-    )
+    try_count = state.get("try_count", 1)
+    print(f"Context Retrieval Try Count: {try_count}")
+    if context:
+        return Command(
+            update={
+                "context": context,
+                "try_count": try_count + 1,
+            },
+            goto=CONTEXT_PRECISION
+        )
+    else:
+        if try_count > MAX_RETRIEVAL_TRY_COUNT:
+            return Command(
+                goto=END
+            )
+        else:
+            return Command(
+                update={
+                    "try_count": try_count + 1,
+                    },
+                goto=CONTEXT_RETRIEVAL
+            )
+    

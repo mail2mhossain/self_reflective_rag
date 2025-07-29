@@ -1,6 +1,12 @@
+chunk_types:
+  TABLE: table
+  IMAGE: image
+  TEXT: text
+  QA: qa
+  UNKNOWN: unknown
 open_ai:
-  key: "YOUR_OPENAI_API_KEY"
-  model: "o4-mini"
+  key: "YOUR OPENAI API KEY"
+  model: "gpt-4o"
 embedding_model: "BAAI/bge-large-en-v1.5"
 weaviate:
   url: "http://localhost:8080"
@@ -14,6 +20,7 @@ mongodb:
 dox_metadata:
   parent_id_key: "parent_id"
   file_id_key: "file_id"
+  chunk_type_key: "chunk_type"
   encoding: "utf-8"
 vector_index:
   parent_index: "parent_index"
@@ -21,3 +28,6 @@ vector_index:
   qa_index: "qa_index"
 vector_db:
   sqlite_file: "sqlite:///file_processor.sqlite"
+file_path:
+  FILE_PATH: "YOUR FILE PATH"
+max_retrieval_try_count: 3

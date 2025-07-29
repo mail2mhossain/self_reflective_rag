@@ -6,6 +6,7 @@ class AnswerGenerationState(TypedDict):
     query: str
     context: list[any]
     answer: str
+    try_count: int
 
 class _BaseAnswerState(TypedDict):
     answers: Annotated[list[str], operator.add]

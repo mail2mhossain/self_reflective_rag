@@ -1,0 +1,72 @@
+@startuml
+title multi_modal_data_ingest_pipeline Workflow
+
+start
+:Input file_path, model_name, chunks_per_query;
+
+:Generate file_id from file_path;
+:Suggest chunk sizes (parent_size, child_size, overlaps);
+
+partition Loading_and_Splitting {
+  :Load document as markdown (rendered);
+  :Extract markdown text and images;
+  :Split markdown by headers into documents;
+
+  while (more docs?)
+    :For each doc;
+    if (doc tokens > parent_size?) then (yes)
+      :Split doc into smaller parent_docs;
+      :Add to parent_docs list;
+    else (no)
+      :Add doc to parent_docs list;
+    endif
+  endwhile
+}
+
+partition Process_Parent_Docs {
+  while (more parent_docs?)
+    :Assign unique parent_id and metadata;
+    :Extract tables from parent_doc;
+
+    if (tables found?) then (yes)
+      while (more tables?)
+        :For each table;
+        :Save table CSV to file;
+        :Generate table summary;
+        if (table summary tokens > child_size?) then (yes)
+          :Split table summary into child_docs;
+        else (no)
+          :Add table_doc to child_docs;
+        endif
+      endwhile
+    endif
+
+    if (images exist?) then (yes)
+      while (more images?)
+        :For each image in parent_doc;
+        :Save image to file;
+        :Generate image caption;
+        if (caption tokens > child_size?) then (yes)
+          :Split image caption into child_docs;
+        else (no)
+          :Add image_doc to child_docs;
+        endif
+      endwhile
+    endif
+
+    :Clean parent_doc text;
+    :Add chunk_type TEXT metadata;
+    :Split cleaned parent_doc into child_docs;
+    :Generate QA pairs from cleaned parent_doc;
+    :Add QA docs to qa_docs list;
+  endwhile
+}
+
+
+partition Storage {
+  :Store parent_docs in MongoDB;
+  :Store child_docs and qa_docs in vector database;
+}
+
+stop
+@enduml

@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from sentence_transformers import CrossEncoder
 from langgraph.types import Command
+from langgraph.graph import END
 from rag.data_retrieval.retriever_state import RetrieverState
 from rag.config import parent_id_key
 
@@ -82,6 +83,13 @@ def cross_encoder_re_rank(state:RetrieverState) -> Command:
     query = state["question"]
     all_dox = state["child_chunks"] + state["qa_chunks"]
 
+    if len(all_dox) == 0:
+        return Command(
+            update={
+                "parent_ids": [],
+            },
+            goto=END
+        )
     pairs = [[query, doc.page_content] for doc in all_dox]
 
     scores = cross_encoder.predict(pairs)
@@ -89,7 +97,7 @@ def cross_encoder_re_rank(state:RetrieverState) -> Command:
     sorted_indices = np.argsort(-scores)
 
     top_ranked_dox = []
-    for i in sorted_indices[:5]:
+    for i in sorted_indices[:10]:
         top_ranked_dox.append(all_dox[i])
 
     parent_ids = [(str(result.metadata[parent_id_key])) for result in top_ranked_dox]

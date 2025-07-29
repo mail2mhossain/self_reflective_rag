@@ -1,0 +1,31 @@
+@startuml
+title Multi-Index Retrieval and Enrichment Pipeline
+
+start
+:user query;
+:Generate query embedding;
+:Hybrid dense + sparse search;
+
+fork
+  :Retrieve child-chunk (top 50, text, table, image);
+fork again
+  :Retrieve QA-chunk (top 20);
+end fork
+
+:Merge results from both indexes;
+:Cross-Encoder re-rank top 10 results;
+
+:Get unique parent IDs from re-ranked top 10 results;
+:Load parent documents (MongoDB);
+
+partition Enrichment {
+  while (more parent docs?)
+    :Append tables CSV content if chunk_type=table;
+    :Append image base64/caption if chunk_type=image;
+    :Append text chunks as is;
+  endwhile
+}
+
+:Context compression using LLM;
+stop
+@enduml

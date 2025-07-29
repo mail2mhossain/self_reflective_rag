@@ -29,7 +29,7 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 def store_in_vector_db(child_docs, qa_docs):
-    msg = f"6. Storing parent, child and QA documents in vector database"
+    msg = f"Storing child and QA documents in vector database"
     print(msg)
 
     weaviate_client = weaviate.connect_to_local(
@@ -52,7 +52,7 @@ def store_in_vector_db(child_docs, qa_docs):
         text_key="text", 
         by_text=False)
     
-    msg = f"7. Successfully saved in vector database"
+    msg = f"Successfully saved in vector database"
     print(msg)
     weaviate_client.close()
 

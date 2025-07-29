@@ -26,9 +26,18 @@ COMBOS: dict[Tuple[Technique, ...], str] = {
     ("handle_multi_query",):                       "M",
     ("handle_decomposed_query",):                  "D",
     ("transform_query", "handle_multi_query"):     "T→M",
+    ("handle_multi_query", "transform_query"):     "M→T",
     ("transform_query", "handle_decomposed_query"):   "T→D",
+    ("handle_decomposed_query", "transform_query"):   "D→T",
     ("handle_multi_query", "handle_decomposed_query"): "M→D",
+    ("handle_decomposed_query", "handle_multi_query"): "D→M",
     ("transform_query", "handle_multi_query", "handle_decomposed_query"): "T→M→D",
+    ("transform_query", "handle_decomposed_query", "handle_multi_query"): "T→D→M",
+    ("handle_multi_query", "handle_decomposed_query", "transform_query"): "M→D→T",
+    ("handle_decomposed_query", "handle_multi_query", "transform_query"): "D→M→T",
+    ("handle_multi_query", "transform_query", "handle_decomposed_query"): "M→T→D",
+    ("handle_decomposed_query", "transform_query", "handle_multi_query"): "D→T→M",
+    ("transform_query", "handle_decomposed_query", "handle_multi_query"): "T→D→M",
 }
 
 class State(TypedDict):
@@ -40,32 +49,36 @@ class State(TypedDict):
 def run_controller(sequence: Tuple[Technique, ...], user_query: str):
     key = COMBOS.get(sequence)
 
-    if key == "T→M":
+    if key == "T→M" or key == "M→T":
         transformed = transform_user_query(user_query)
         multi_queries = multi_query(transformed)      
         graph = multi_query_answer_generation_agent()
         results = graph.invoke({"multi_queries": multi_queries, "answer_generation_graph": answer_generation_agent()})
-        return results["answer"]         
+        answer = results.get("answer", "No answer found")
+        return answer         
 
-    if key == "T→D":
+    if key == "T→D" or key == "D->T":
         transformed = transform_user_query(user_query)
         graph = generate_decompose_rag_graph()
         results = graph.invoke({"query": transformed})
-        return results["answer"]
+        answer = results.get("answer", "No answer found")
+        return answer
 
-    if key == "M→D":
+    if key == "M→D" or key == "D→M":
         transformed = transform_user_query(user_query)
         variants = multi_query(transformed)
         graph = multi_query_answer_generation_agent()
         results = graph.invoke({"multi_queries": variants, "answer_generation_graph": generate_decompose_rag_graph()})
-        return results["answer"]
+        answer = results.get("answer", "No answer found")
+        return answer
 
-    if key == "T→M→D":
+    if key == "T→M→D" or key == "D→M→T" or key == "M→T→D" or key == "M→D→T" or key == "D→T→M" or key == "T→D→M":
         transformed = transform_user_query(user_query)
         variants    = multi_query(transformed)
         graph = multi_query_answer_generation_agent()
         results = graph.invoke({"multi_queries": variants, "answer_generation_graph": generate_decompose_rag_graph()})
-        return results["answer"]
+        answer = results.get("answer", "No answer found")
+        return answer
 
     transformed = transform_user_query(user_query)
     return transform_query(transformed)
@@ -74,27 +87,34 @@ def run_controller(sequence: Tuple[Technique, ...], user_query: str):
 @tool
 def transform_query(transformed_query: str):
     """Rewriting a user’s unclear or casual phrasing into a concise, formal query that preserves its original meaning."""
+    print("Has entered transform_query")
     graph = answer_generation_agent()
     results = graph.invoke({"query": transformed_query})
-    return results["answer"]
+    answer = results.get("answer", "No answer found")
+    return answer
 
 @tool
 def handle_multi_query(queries: List[str]):
     """Generating several different but related query variants to capture documents that might use different wording or style."""
+    print("Has entered handle_multi_query")
     graph = multi_query_answer_generation_agent()
     results = graph.invoke({"multi_queries": queries, "answer_generation_graph": answer_generation_agent()})
-    return results["answer"]
+    answer = results.get("answer", "No answer found")
+    return answer
 
 @tool
 def handle_decomposed_query(sub_questions: List[str]):
     """Breaking a complex or multipart query into simpler sub-questions, each of which can be retrieved and answered separately."""
+    print("Has entered handle_decomposed_query")
     graph = multi_query_answer_generation_agent()
     results = graph.invoke({"multi_queries": sub_questions, "answer_generation_graph": answer_generation_agent()})
-    return results["answer"]
+    answer = results.get("answer", "No answer found")
+    return answer
 
 @tool
 def combine_techniques(sequence: List[str], user_query: str):
     """Combining multiple techniques to apply them in sequence."""
+    print("Has entered combine_techniques")
     seq_tuple: Tuple[str, ...] = tuple(sequence)
     return run_controller(seq_tuple, user_query)
 

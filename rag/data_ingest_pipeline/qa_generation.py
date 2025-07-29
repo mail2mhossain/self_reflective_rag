@@ -89,8 +89,6 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-# print(prompt.format(page_content="page_content"))
-
 def generate_qa(page_content: str) -> QA_Data:
     llm = ChatOpenAI(model_name=GPT_MODEL, temperature=0, openai_api_key=OPENAI_API_KEY)
 

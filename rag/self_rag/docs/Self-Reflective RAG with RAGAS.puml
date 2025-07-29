@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Self-Reflective RAG with RAGAS
+
+start
+
+partition context_flow {
+    :Context Retrieval\nretrieve_data;
+    :Context Precision\ncompute_context_precision;
+}
+
+--> context_flow
+
+if (context_precision < 0.50?) then (yes)
+    :Transform Message\ntransform_message;
+    --> context_flow
+    if (context_precision < 0.50?) then (yes)
+        stop
+    else (no)
+        --> response_flow
+    endif
+else (no)
+    --> response_flow
+endif
+
+'--- Response Generation & Validation Subflow ---'
+partition response_flow {
+    :Answer Generation\ngenerate;
+    :Validate Answer Quality\nvalidate_answer_quality;
+    if (scores["faithfulness"] < 0.80 or scores["answer_relevancy"] < 0.75?) then (no_quality)
+        :answer = "no_answer";
+        stop
+    else (quality_ok)
+        :answer = state["answer"];
+        stop
+    endif
+}
+
+@enduml

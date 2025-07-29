@@ -12,7 +12,9 @@ from rag.config import (
     WEAVIATE_URL_PORT, 
     WEAVIATE_SECURE, 
     file_id_key, 
-    parent_id_key
+    parent_id_key,
+    chunk_type_key,
+    CHUNK_TYPE
 )
 
 
@@ -36,10 +38,10 @@ def get_qa_chunks(state: RetrieverState) -> Command:
             index_name=QA_INDEX,
             text_key="text",
             embedding=emb,
-            attributes=[file_id_key, parent_id_key],
+            attributes=[file_id_key, parent_id_key, chunk_type_key, 'source'],
         )
 
-        docs = qa_store.similarity_search(state["question"], k=10, alpha=0.5)
+        docs = qa_store.similarity_search(state["question"], k=20, alpha=0.5)
         print(f"Total qa docs found: {len(docs)}")
         
         return Command(
